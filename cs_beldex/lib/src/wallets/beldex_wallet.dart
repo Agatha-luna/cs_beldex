@@ -798,6 +798,19 @@ class BeldexWallet extends Wallet {
   }
 
   @override
+  Future<void> setLogLevel(int level) {
+    // 10 seconds seems to be the default in beldex core
+    return _worker.runTask(
+      Task(
+        func: FuncName.setLogLevel,
+        args: {
+          "level": level,
+        },
+      ),
+    );
+  }
+
+  @override
   Future<void> stopSyncing() => _worker.runTask(
         Task(
           func: FuncName.stopSyncing,
