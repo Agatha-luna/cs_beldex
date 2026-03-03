@@ -146,6 +146,10 @@ void startWalletRefresh(Pointer<Void> walletPointer) {
   bindings.BELDEX_Wallet_startRefresh(walletPointer);
 }
 
+void setLogLevel(int level) {
+  bindings.BELDEX_WalletManagerFactory_setLogLevel(level);
+}
+
 void pauseWalletRefresh(Pointer<Void> walletPointer) {
   bindings.BELDEX_Wallet_pauseRefresh(walletPointer);
 }

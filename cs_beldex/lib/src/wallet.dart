@@ -269,6 +269,8 @@ abstract class Wallet {
   /// Sets the auto refresh interval and starts refreshing/syncing.
   Future<void> startSyncing({Duration interval = const Duration(seconds: 20)});
 
+  Future<void> setLogLevel(int level);
+
   /// Stop syncing/refreshing
   Future<void> stopSyncing();
 

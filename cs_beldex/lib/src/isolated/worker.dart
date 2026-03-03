@@ -36,6 +36,7 @@ enum FuncName {
   getWalletRefreshFromBlockHeight,
   setWalletRefreshFromBlockHeight,
   startSyncing,
+  setLogLevel,
   stopSyncing,
   rescanBlockchainAsync,
   getBalance,
@@ -272,6 +273,7 @@ class Worker {
       FuncName.setWalletRefreshFromBlockHeight =>
         _setRefreshFromBlockHeight(args),
       FuncName.startSyncing => _startSyncing(args),
+      FuncName.setLogLevel => _setLogLevel(args),
       FuncName.stopSyncing => _stopSyncing(args),
       FuncName.rescanBlockchainAsync => _rescanWalletBlockchainAsync(args),
       FuncName.getBalance => _getBalance(args),
@@ -636,6 +638,11 @@ void _startSyncing(Map<String, dynamic> args) {
   bdx_ffi.setWalletAutoRefreshInterval(walletPointer, millis: millis);
   bdx_ffi.refreshWalletAsync(walletPointer);
   return bdx_ffi.startWalletRefresh(walletPointer);
+}
+
+void _setLogLevel(Map<String, dynamic> args) {
+  final level = args["level"] as int;
+  bdx_ffi.setLogLevel(level);
 }
 
 void _stopSyncing(Map<String, dynamic> args) {
