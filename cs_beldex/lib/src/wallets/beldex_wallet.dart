@@ -5,7 +5,7 @@ import 'package:meta/meta.dart';
 
 import '../../cs_beldex.dart';
 import '../deprecated/get_height_by_date.dart';
-import '../ffi_bindings/beldex_wallet_manager_bindings.dart' as xmr_wm_ffi;
+import '../ffi_bindings/beldex_wallet_manager_bindings.dart' as bdx_wm_ffi;
 import '../isolated/worker.dart';
 
 class BeldexWallet extends Wallet {
@@ -16,10 +16,11 @@ class BeldexWallet extends Wallet {
 
   // shared pointer
   static final int _walletManagerPointerAddress =
-      xmr_wm_ffi.getWalletManager().address;
+      bdx_wm_ffi.getWalletManager().address;
 
   int? _walletPointer;
   int _getWalletPointer() {
+    Logging.log?.i("Getting wallet pointer for wallet at address ${_walletPointer}");
     if (_walletPointer == null) {
       throw Exception(
         "BeldexWallet was closed!",
@@ -500,7 +501,7 @@ class BeldexWallet extends Wallet {
 
   // ===========================================================================
   // special check to see if wallet exists
-  static bool isWalletExist(String path) => xmr_wm_ffi.walletExists(
+  static bool isWalletExist(String path) => bdx_wm_ffi.walletExists(
         Pointer<Void>.fromAddress(_walletManagerPointerAddress),
         path,
       );

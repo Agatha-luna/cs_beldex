@@ -469,6 +469,7 @@ int _restoreDeterministicWalletFromSpendKey(Map<String, dynamic> args) {
 }
 
 int _openWallet(Map<String, dynamic> args) {
+  Logging.log?.i("Opening wallet ${args["path"]} from _openWallet");
   final wmPointer = Pointer<Void>.fromAddress(args["wm"] as int);
   final path = args["path"] as String;
   final password = args["pw"] as String;
@@ -489,6 +490,7 @@ int _openWallet(Map<String, dynamic> args) {
 }
 
 void _refreshCoins(Map<String, dynamic> args) {
+  Logging.log?.i("Refreshing coins for wallet ${args["wp"]} from _refreshCoins");
   final walletPointer = Pointer<Void>.fromAddress(args["wp"] as int);
   final coinsPointer = bdx_ffi.getCoinsPointer(walletPointer);
   bdx_ffi.refreshCoins(coinsPointer);
@@ -817,6 +819,7 @@ List<String> _getAllTxids(Map<String, dynamic> args) {
 }
 
 List<Map<String, dynamic>> _getOutputs(Map<String, dynamic> args) {
+  Logging.log?.i("Getting outputs for wallet ${args["wp"]} from _getOutputs");
   final walletPointer = Pointer<Void>.fromAddress(args["wp"] as int);
   final refresh = args["refresh"] as bool;
   final includeSpent = args["includeSpent"] as bool;
@@ -1059,6 +1062,7 @@ bool _save(Map<String, dynamic> args) {
 }
 
 void _close(Map<String, dynamic> args) {
+  Logging.log?.i("Closing wallet ${args["wp"]} from _close");
   final wmPointer = Pointer<Void>.fromAddress(args["wm"] as int);
   final walletPointer = Pointer<Void>.fromAddress(args["wp"] as int);
   final save = args["save"] as bool;
