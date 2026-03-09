@@ -1,5 +1,5 @@
 enum TransactionPriority {
-  normal(0),
+  normal(1),
   flash(5);
 
   const TransactionPriority(this.value);
