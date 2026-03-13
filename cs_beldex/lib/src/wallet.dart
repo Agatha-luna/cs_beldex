@@ -72,6 +72,8 @@ abstract class Wallet {
     switch (priority) {
       case TransactionPriority.normal:
         return 9000000;
+      case TransactionPriority.medium:
+        return 12000000;
       case TransactionPriority.flash:
         return 36800000;
     }
