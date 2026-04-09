@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../widgets/info_item.dart';
 import 'create_transaction_view.dart';
+import 'history_view.dart';
 
 class WalletView extends StatefulWidget {
   const WalletView({super.key, required this.wallet});
@@ -140,17 +141,32 @@ class _WalletViewState extends State<WalletView> {
       ),
       body: Column(
         children: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute<dynamic>(
-                  builder: (context) => CreateTransactionView(
-                    wallet: widget.wallet,
-                  ),
-                ),
-              );
-            },
-            child: const Text("Send"),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute<dynamic>(
+                      builder: (context) => CreateTransactionView(
+                        wallet: widget.wallet,
+                      ),
+                    ),
+                  );
+                },
+                child: const Text("Send"),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute<dynamic>(
+                      builder: (context) => HistoryView(wallet: widget.wallet),
+                    ),
+                  );
+                },
+                child: const Text("History"),
+              ),
+            ],
           ),
           Padding(
             padding: const EdgeInsets.all(16),
