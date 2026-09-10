@@ -43,11 +43,42 @@ void main(List<String> args) async {
   for (final triple in triples) {
     for (final coin in coins) {
       await runAsync("./build_single.sh", [coin, triple, "-j$nProc"]);
-      final path = "$envMoneroCDir"
-          "${Platform.pathSeparator}release"
-          "${Platform.pathSeparator}$coin"
+
+      final destDir = Directory(
+        "$envMoneroCDir"
+        "${Platform.pathSeparator}release"
+        "${Platform.pathSeparator}$coin",
+      )..createSync(recursive: true);
+      final destPath = "${destDir.path}"
           "${Platform.pathSeparator}${triple}_libwallet2_api_c.$bt";
-      await runAsync("unxz", ["-f", "$path.xz"]);
+
+      // build_single.sh drops the built artifact under a git-describe
+      // tagged directory (release/<tag>/<triple>/lib<coin>_wallet2_api_c.<ext>)
+      // rather than the flat path the rest of this pipeline expects, so
+      // locate it and copy it into place.
+      final releaseDir = Directory(
+        "$envMoneroCDir${Platform.pathSeparator}release",
+      );
+      File? built;
+      for (final entry in releaseDir.listSync()) {
+        if (entry is! Directory) continue;
+        final candidate = File(
+          "${entry.path}"
+          "${Platform.pathSeparator}$triple"
+          "${Platform.pathSeparator}lib${coin}_wallet2_api_c.$bt",
+        );
+        if (candidate.existsSync()) {
+          built = candidate;
+          break;
+        }
+      }
+      if (built == null) {
+        throw Exception(
+          "Could not find built artifact for $coin/$triple under "
+          "${releaseDir.path}",
+        );
+      }
+      built.copySync(destPath);
     }
   }
 
@@ -158,14 +189,16 @@ void main(List<String> args) async {
         ],
       );
 
+      // These are mingw toolchain runtime DLLs (not built by this project) —
+      // pulled directly from contrib/depends rather than from the release
+      // dir, since build_single.sh no longer copies them there itself.
       final sspPath = "$envMoneroCDir"
-          "${Platform.pathSeparator}release"
-          "${Platform.pathSeparator}beldex"
-          "${Platform.pathSeparator}x86_64-w64-mingw32_libssp-0.dll";
+          "${Platform.pathSeparator}contrib"
+          "${Platform.pathSeparator}depends"
+          "${Platform.pathSeparator}x86_64-w64-mingw32"
+          "${Platform.pathSeparator}lib"
+          "${Platform.pathSeparator}libssp-0.dll";
 
-      if (File("$sspPath.xz").existsSync()) {
-        await runAsync("unxz", ["-f", "$sspPath.xz"]);
-      }
       await runAsync(
         "cp",
         [
@@ -176,13 +209,15 @@ void main(List<String> args) async {
       );
 
       final pThreadPath = "$envMoneroCDir"
-          "${Platform.pathSeparator}release"
-          "${Platform.pathSeparator}beldex"
-          "${Platform.pathSeparator}x86_64-w64-mingw32_libwinpthread-1.dll";
+          "${Platform.pathSeparator}contrib"
+          "${Platform.pathSeparator}depends"
+          "${Platform.pathSeparator}x86_64-w64-mingw32"
+          "${Platform.pathSeparator}sysroot"
+          "${Platform.pathSeparator}usr"
+          "${Platform.pathSeparator}x86_64-w64-mingw32"
+          "${Platform.pathSeparator}bin"
+          "${Platform.pathSeparator}libwinpthread-1.dll";
 
-      if (File("$pThreadPath.xz").existsSync()) {
-        await runAsync("unxz", ["-f", "$pThreadPath.xz"]);
-      }
       await runAsync(
         "cp",
         [
